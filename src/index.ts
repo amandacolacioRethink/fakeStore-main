@@ -5,10 +5,10 @@ const app = express();
 app.use(express.json());
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("API V1 is running");
+  res.send("Fake Store API is running");
 });
 
-app.use("/api/v1", router);
+app.use("/", router);
 
 const port = 3000
 app.listen(port, ()=>{console.log(`Listening on ${port}`)});

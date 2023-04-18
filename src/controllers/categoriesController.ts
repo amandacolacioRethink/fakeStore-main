@@ -8,7 +8,8 @@ const knexInstance = knex(config);
 const index = async (req: Request, res: Response) => {
   try {
     const categories: Category[] = await knexInstance("categories").select("*");
-    res.status(200).json(categories);
+    const formatedCategories = categories.map((category) => category.name);
+    res.status(200).json(formatedCategories);
   } catch (error:any) {
     res.send(error);
   }
@@ -16,11 +17,31 @@ const index = async (req: Request, res: Response) => {
 
 const show = async (req: Request, res: Response) => {
   try {
-    const id:string = req.params.id;
-    const category: Category[]  = await knexInstance("categories").select("*").where({ id });
-    if (!category.length) throw new Error("This category was not found");
+    const { category } = req.params;
+    const products = await knexInstance("products")
+    .select(
+      "*",
+      "categories.name as category",
+      "categories.id as category_id",
+      "products.id as id"
+    )
+    .join("categories", "categories.id", "=", "products.category_id")
+    .where({ category });
 
-    res.status(200).json(category[0]);
+    const formatedProducts = products.map((product) => ({
+      id: product.id,
+      title: product.title,
+      price: product.price,
+      description: product.description,
+      category: product.category,
+      image: product.image,
+      rating: {
+        rate: product.rate,
+        count: product.count,
+      },
+    }));
+
+    res.status(200).json(formatedProducts);
   } catch (error: any) {
     res.send(error.message ? { error: error.message } : error);
   }
@@ -72,33 +93,3 @@ export default { insert, index, show, update, remove };
 
 
 
-
-
-
-
-
-  //inserir dados por código
-
-//  const url = "https://fakestoreapi.com/";
-
-//   const geralFetch = async (url:any) => {
-//     return await fetch(url).then((request) => request.json());
-//   };
-
-//   const insert = async () => {
-//     try {
-        
-//       const categories = await geralFetch(url + "products/" + 'categories');    
-      
-//       await Promise.all(
-//         categories.map(async (category:any)=> {
-//           const id: number[] = await knexInstance("categories").insert({
-//             name: category,
-//           });
-//         })
-//       );
-          
-//     } catch (error: any) {
-      
-//     }
-//   };

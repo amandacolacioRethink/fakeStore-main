@@ -1,12 +1,13 @@
 import { Router } from "express";
 import categoriesControllers from "../controllers/categoriesController";
 
-const router: Router = Router();
+const categories: Router = Router();
+const category: Router = Router();
 
-router.post("/", categoriesControllers.insert);
-router.get("/", categoriesControllers.index);
-router.get("/:id", categoriesControllers.show);
-router.put("/:id", categoriesControllers.update);
-router.delete("/:id", categoriesControllers.remove);
+categories.post("/", categoriesControllers.insert);
+categories.get("/", categoriesControllers.index);
+category.get("/:category", categoriesControllers.show);
+categories.put("/:id", categoriesControllers.update);
+categories.delete("/:id", categoriesControllers.remove);
 
-export { router };
+export { categories, category };
